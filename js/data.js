@@ -1,4 +1,9 @@
 window.MERIDIAN = {
+  caseNote: "Harborline is a fictional teaching case. Baseline size, stack, module heat, incidents, and KPI targets are illustrative assumptions that would need validation during real discovery.",
+  method: {
+    promotionVotes: 2,
+    weights: { cohesion: 0.45, coupling: 0.30, reuse: 0.15, votes: 0.10 }
+  },
   app: {
     name: "Harborline TOS",
     vintage: 2009,
@@ -192,6 +197,148 @@ choreography with ContainerLedger + Equipment`
       contract: `service EquipmentPool  layer: task
 capability, not a god object of telemetry`
     }
+  ],
+  layers: [
+    { id: "process", title: "Process", description: "Coordinates a business outcome across service boundaries." },
+    { id: "task", title: "Task", description: "Performs a focused capability used by one or more processes." },
+    { id: "entity", title: "Entity", description: "Owns the authoritative state and write rules for a business concept." },
+    { id: "utility", title: "Utility", description: "Provides shared technical or integration capabilities." }
+  ],
+  boundaries: {
+    vessel: {
+      purpose: "Maintain the lifecycle and published facts for a vessel visit.",
+      owns: ["Visit", "Voyage", "Line operator"],
+      avoids: ["Berth allocation", "Container position", "Invoice settlement"],
+      consistency: "Visit state is authoritative here; downstream consumers receive versioned visit events."
+    },
+    berth: {
+      purpose: "Allocate quay windows and crane capacity to a nominated visit.",
+      owns: ["Berth window", "Bollard allocation", "Crane split"],
+      avoids: ["Visit identity", "Yard position", "Invoice calculation"],
+      consistency: "Planning may be eventually consistent; conflicting allocations are checked before confirmation."
+    },
+    container: {
+      purpose: "Maintain the canonical container location, movement history, and operational holds.",
+      owns: ["Container identity", "Yard position", "Move history", "Operational holds"],
+      avoids: ["EDI translation", "Customs authority decisions", "Tariff policy"],
+      consistency: "A single writer appends moves; consumers build read models from movement events."
+    },
+    gate: {
+      purpose: "Coordinate truck appointments, admission checks, and passage outcomes.",
+      owns: ["Appointment", "Passage decision", "Gate ticket"],
+      avoids: ["Container location", "Identity policy", "Tariff rules"],
+      consistency: "Admission is an idempotent command; a passage is confirmed only after required checks succeed."
+    },
+    tariff: {
+      purpose: "Calculate charges from one tariff policy and issue immutable invoices.",
+      owns: ["Rate card", "Quote", "Invoice", "Settlement"],
+      avoids: ["Visit lifecycle", "Container movement", "Gate appointment"],
+      consistency: "Issued invoices are immutable; corrections use credit or adjustment documents."
+    },
+    edi: {
+      purpose: "Translate partner messages into validated domain commands and publish partner updates.",
+      owns: ["Partner mappings", "Message envelope", "Delivery status"],
+      avoids: ["Yard position", "Visit state", "Customs release decision"],
+      consistency: "Inbound messages are deduplicated and acknowledged; failed translations enter a replayable exception queue."
+    },
+    notify: {
+      purpose: "Deliver subscribed business signals over configured channels.",
+      owns: ["Subscription", "Delivery attempt", "Channel preference"],
+      avoids: ["Business decision", "Invoice content", "Visit state"],
+      consistency: "Delivery is asynchronous and retryable; a notification never determines transaction success."
+    },
+    identity: {
+      purpose: "Authenticate actors and authorize scoped actions at service boundaries.",
+      owns: ["Principal", "Role", "Resource scope"],
+      avoids: ["Business ownership", "Operational workflow state", "Application-specific data"],
+      consistency: "Services validate short-lived signed tokens and enforce their own resource-level policy."
+    },
+    work: {
+      purpose: "Compose and dispatch the ordered work needed to load or discharge a vessel.",
+      owns: ["Worklist", "Move sequence", "Dispatch assignment"],
+      avoids: ["Container position", "Equipment telemetry", "Visit identity"],
+      consistency: "Worklist changes are coordinated by events; move completion is confirmed by the owning ledger."
+    },
+    equipment: {
+      purpose: "Match equipment capability and availability to an operational assignment.",
+      owns: ["Equipment capability", "Availability", "Assignment"],
+      avoids: ["Worklist sequence", "Container position", "Vessel visit"],
+      consistency: "Assignments use a current availability view and emit an event when equipment is committed."
+    }
+  },
+  evidence: {
+    vessel: {
+      top: "Yes · P1 needs a durable Visit and Voyage lifecycle.",
+      bottom: "Yes · VV stores ETA, draft, line operator, and visit state.",
+      goal: "Yes · G2 needs a fast, trusted ETA; G3 needs call-level billing context."
+    },
+    berth: {
+      top: "Yes · P1 assigns a berth before a vessel can work.",
+      bottom: "Yes · BP contains berth windows, crane splits, and tidal constraints.",
+      goal: "Yes · G4 requires marine planning to move behind a strangler seam."
+    },
+    container: {
+      top: "Yes · P2, P3, and P4 all need a stable Box identity and position.",
+      bottom: "Yes · YI and CM store positions and movements; YI is highly change-prone.",
+      goal: "No · none of the four stated outcomes names a container ledger as an outcome."
+    },
+    gate: {
+      top: "Yes · P2 is a distinct appointment-to-passage business process.",
+      bottom: "Yes · GO contains appointment, OCR, booking, and passage behavior.",
+      goal: "Yes · G1 directly measures truck turn time."
+    },
+    tariff: {
+      top: "Yes · P4 requires a charge and release decision.",
+      bottom: "Yes · BL plus three copied billing routines indicate a fragmented capability.",
+      goal: "Yes · G3 explicitly requires one tariff truth and one vessel-call invoice."
+    },
+    edi: {
+      top: "No · message translation is an integration concern, not a standalone domain process.",
+      bottom: "Yes · ED is embedded in YI stored procedures and must be separated from writes.",
+      goal: "Yes · G2 and G4 need decoupled partner updates and a migration seam."
+    },
+    notify: {
+      top: "No · channel delivery is cross-cutting rather than a port domain process.",
+      bottom: "Yes · NT holds shared SMS, email, and legacy fax behavior.",
+      goal: "Yes · G1 and G2 need timely signals without coupling delivery to transactions."
+    },
+    identity: {
+      top: "No · access policy is cross-cutting, not a business-domain service seed.",
+      bottom: "Yes · AU combines LDAP with screen-level grants.",
+      goal: "No · security is a necessary constraint, but no explicit security KPI is in this brief."
+    },
+    work: {
+      top: "Yes · P3 coordinates work queues, moves, and hatch completion.",
+      bottom: "Yes · CM, EQ, and MQ batches split one operational workflow across modules.",
+      goal: "Yes · G4 favors incremental orchestration over replacing the work system at once."
+    },
+    equipment: {
+      top: "Yes · P3 needs equipment capability and dispatch assignment.",
+      bottom: "Yes · EQ already contains an equipment pool and assignment behavior.",
+      goal: "No · none of the stated goals requires a separate equipment outcome."
+    }
+  },
+  edgeNotes: {
+    "gate:identity": "Gate Passage validates actor and resource scope before accepting an appointment or passage command.",
+    "gate:container": "Gate Passage reads container identity and holds, then requests a movement when a truck enters or exits.",
+    "gate:tariff": "Gate Passage requests charge status when the cargo release policy requires payment clearance.",
+    "gate:notify": "Gate Passage publishes passage outcomes; Signal delivers subscribed notifications asynchronously.",
+    "work:container": "Quay Worklist requests moves; Container Ledger confirms movement with an authoritative MovePosted event.",
+    "work:equipment": "Quay Worklist requests equipment assignment and consumes assignment outcomes.",
+    "work:vessel": "Quay Worklist uses the visit's work window and lifecycle state to plan executable work.",
+    "berth:vessel": "Berth Window allocates a visit and publishes the confirmed berth plan for the Vessel Call context.",
+    "edi:container": "Partner Message translates partner instructions into validated movement or hold commands; it never writes positions.",
+    "edi:vessel": "Partner Message normalizes vessel and voyage updates into Vessel Call commands.",
+    "tariff:vessel": "Tariff & Invoice uses a versioned vessel-call snapshot as the basis for call charges.",
+    "tariff:notify": "Tariff & Invoice emits invoice-issued or payment-cleared events consumed by Signal.",
+    "work:notify": "Quay Worklist publishes work and completion signals for subscribed operators."
+  },
+  choreography: [
+    { step: "Book slot", service: "Gate Passage", message: "POST /slots · return an idempotent appointment reference" },
+    { step: "OCR plate", service: "Gate Passage", message: "Match the detected plate to the appointment; reject ambiguous matches for review" },
+    { step: "Match booking", service: "Harbor Identity + Container Ledger", message: "Authorize the clerk, then verify box identity and active holds" },
+    { step: "Issue ticket", service: "Gate Passage", message: "POST /passages · persist the admission decision and ticket" },
+    { step: "Yard in", service: "Container Ledger → Signal", message: "Append the move, publish MovePosted, and notify subscribers asynchronously" }
   ],
   edges: [
     ["gate", "identity"], ["gate", "container"], ["gate", "tariff"], ["gate", "notify"],

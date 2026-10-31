@@ -26,7 +26,7 @@
           <small>SOA Observatory</small>
         </div>
       </div>
-      <nav class="nav">
+      <nav class="nav" aria-label="Project sections">
         <button data-view="home" class="active">Prologue</button>
         <button data-view="relic">The Relic</button>
         <button data-view="lab">Identification Lab</button>
@@ -38,12 +38,12 @@
       <div class="rail-foot">
         Case: <em>Harborline TOS</em><br />
         Method: triangulated SOMA<br />
-        Vintage: 2009 → now
+      Status: illustrative case study
       </div>
     </aside>
 
     <main class="stage">
-      <div class="mobile-nav">
+      <nav class="mobile-nav" aria-label="Project sections">
         <button data-view="home">Prologue</button>
         <button data-view="relic">Relic</button>
         <button data-view="lab">Lab</button>
@@ -51,13 +51,14 @@
         <button data-view="contracts">Contracts</button>
         <button data-view="tide">Tide</button>
         <button data-view="report">Report</button>
-      </div>
+      </nav>
       <section class="view active" id="home">
         <p class="kicker">Service identification · SOA modeling</p>
         <h2>An observatory for a <em>living monolith</em>.</h2>
         <p class="lede">
-          Meridian does not invent a greenfield SOA. It looks at Harborline — a 1.8 million line terminal operating system still running a port — and triangulates services from three meridians: the business domain, the existing assets, and the goals the port actually has.
+          Meridian models Harborline, a fictional legacy terminal operating system, as an existing-application case study. It triangulates service candidates from the business domain, the assets already in place, and the outcomes the port needs—then makes ownership, contracts, runtime conversations, and migration seams inspectable.
         </p>
+        <p class="case-note"><strong>Case-study boundary</strong> Harborline, its stack, measurements, and operating facts are illustrative assumptions—not claims about a real port or an audited production system. Replace them with discovery evidence before using this model for an implementation.</p>
         <div class="cta-row">
           <button class="btn solid" data-go="lab">Open the lab</button>
           <button class="btn" data-go="relic">Inspect the relic</button>
@@ -94,23 +95,28 @@
       <section class="view" id="lab">
         <p class="kicker">IBM SOMA, made spatial</p>
         <h2>Three meridians, <em>one catalog</em>.</h2>
-        <p class="lede">A candidate is promoted only when it survives triangulation. Domain decomposition (top-down), existing-asset analysis (bottom-up), and goal-service modeling (meet-in-the-middle) each cast a vote. Cohesion, coupling, and reuse then score the survivors.</p>
+        <p class="lede">Domain decomposition (top-down), existing-asset analysis (bottom-up), and goal-service modeling (meet-in-the-middle) each cast a vote. A candidate needs at least two votes to be promoted; cohesion, coupling, reuse, and vote coverage provide a separate ranking score.</p>
+        <div class="decision-rule">
+          <strong>Promotion rule</strong>
+          <span>At least 2 of 3 meridian votes</span>
+          <span class="muted">Scores rank candidates; they do not override the vote threshold.</span>
+        </div>
         <div class="lenses">
-          <article class="lens on" data-copy="Decompose marine, landside, yard, finance. Process tasks become service seeds. Entities that own data become entity services. We refuse god-modules.">
+          <button class="lens on" type="button" aria-pressed="true" data-copy="Decompose marine, landside, yard, finance. Process tasks become service seeds. Entities that own data become entity services. We refuse god-modules.">
             <div class="tag">Top-down</div>
             <h3>Domain</h3>
             <p class="muted">Harborline’s four processes and the entities they touch: Visit, Box, Berth, Invoice, Party.</p>
-          </article>
-          <article class="lens" data-copy="Read the relic: stored procedures, MQ payloads, Forms screens. Wrap what is stable. Isolate what is copied. EDI must never write yard slots again.">
+          </button>
+          <button class="lens" type="button" aria-pressed="false" data-copy="Read the relic: stored procedures, MQ payloads, Forms screens. Wrap what is stable. Isolate what is copied. EDI must never write yard slots again.">
             <div class="tag">Bottom-up</div>
             <h3>Assets</h3>
             <p class="muted">1.8M lines, four billing clones, EDI inside inventory PL/SQL, LDAP bolted on.</p>
-          </article>
-          <article class="lens" data-copy="Goals are not slogans. Turn-time under 28 minutes needs Gate Passage. One tariff truth needs Invoice as a system of record. Partner ETA under 30s needs Vessel Call events.">
+          </button>
+          <button class="lens" type="button" aria-pressed="false" data-copy="Goals are not slogans. Turn-time under 28 minutes needs Gate Passage. One tariff truth needs Invoice as a system of record. Partner ETA under 30s needs Vessel Call events.">
             <div class="tag">Meet-in-middle</div>
             <h3>Goals</h3>
             <p class="muted">Truck turn, trustworthy ETA, single invoice, strangler — not a rewrite.</p>
-          </article>
+          </button>
         </div>
         <p class="lede" id="lens-copy">Decompose marine, landside, yard, finance. Process tasks become service seeds. Entities that own data become entity services. We refuse god-modules.</p>
         <div class="filters">
@@ -128,7 +134,13 @@
         <p class="kicker">SOA model</p>
         <h2>The service <em>sky</em>.</h2>
         <p class="lede">Process services orchestrate. Entity services own truth. Task services do one job well. Utility services are the tide that every ship rides. Edges are runtime conversations, not database foreign keys.</p>
-        <canvas id="sky-canvas"></canvas>
+        <canvas id="sky-canvas" role="img" aria-label="Service interaction diagram. The service layer map and runtime conversation list below provide a text equivalent."></canvas>
+        <div class="layer-map" id="layer-map"></div>
+        <div class="edge-list">
+          <h3>Runtime conversations</h3>
+          <p class="muted">A caller depends on a service contract or event—not another service’s tables.</p>
+          <ul id="edge-list"></ul>
+        </div>
         <div class="legend">
           <span><i class="swatch" style="background:#6fd4c0"></i>Entity</span>
           <span><i class="swatch" style="background:#d4a574"></i>Process</span>
@@ -145,6 +157,7 @@
         <div class="contract">
           <div class="svc-list" id="svc-list"></div>
           <div class="card">
+            <div class="boundary" id="boundary"></div>
             <pre class="spec" id="spec"></pre>
             <div class="ops" id="ops"></div>
           </div>
@@ -172,12 +185,15 @@
         <div class="report">
           <h3>Service catalog after triangulation</h3>
           <p class="muted" id="promo"></p>
+          <p class="case-note"><strong>Interpretation</strong> The catalog is a modeling proposal derived from the illustrative baseline. Vote counts express the modeled method’s evidence coverage, not independently verified production facts.</p>
+          <div class="table-wrap">
           <table class="table">
             <thead>
               <tr><th>Service</th><th>Layer</th><th>Votes</th><th>Cohesion</th><th>Coupling</th><th>Score</th><th>Owner</th></tr>
             </thead>
             <tbody id="report-body"></tbody>
           </table>
+          </div>
           <p class="muted" style="margin-top:18px">
             Meridian’s claim: service identification on an existing application is not a workshop of sticky notes. It is a three-bearing fix — domain, assets, goals — then a quantitative cut of cohesion, coupling, reuse, and granularity. The SOA model is the sky that remains after the fog of the monolith lifts.
           </p>
@@ -189,6 +205,7 @@
     </main>
   </div>
   <script src="js/data.js"></script>
+  <script src="js/model.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
