@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meridian — SOA Observatory</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="description" content="Service identification and SOA modeling for Harborline, a 2009 terminal operating system. A living triangulation of domain, assets, and goals." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <canvas id="sky"></canvas>
+  <div class="app">
+    <aside class="rail">
+      <div class="mark">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="28" stroke="#d4a574" stroke-width="1.4"/>
+          <path d="M32 8v48M8 32h48M18 18l28 28M46 18L18 46" stroke="#6fd4c0" stroke-width="1"/>
+          <circle cx="32" cy="32" r="6" fill="#d4a574"/>
+        </svg>
+        <div>
+          <h1>Meridian</h1>
+          <small>SOA Observatory</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <button data-view="home" class="active">Prologue</button>
+        <button data-view="relic">The Relic</button>
+        <button data-view="lab">Identification Lab</button>
+        <button data-view="constellation">Service Sky</button>
+        <button data-view="contracts">Contracts</button>
+        <button data-view="tide">Strangler Tide</button>
+        <button data-view="report">Field Report</button>
+      </nav>
+      <div class="rail-foot">
+        Case: <em>Harborline TOS</em><br />
+        Method: triangulated SOMA<br />
+        Vintage: 2009 → now
+      </div>
+    </aside>
+
+    <main class="stage">
+      <div class="mobile-nav">
+        <button data-view="home">Prologue</button>
+        <button data-view="relic">Relic</button>
+        <button data-view="lab">Lab</button>
+        <button data-view="constellation">Sky</button>
+        <button data-view="contracts">Contracts</button>
+        <button data-view="tide">Tide</button>
+        <button data-view="report">Report</button>
+      </div>
+      <section class="view active" id="home">
+        <p class="kicker">Service identification · SOA modeling</p>
+        <h2>An observatory for a <em>living monolith</em>.</h2>
+        <p class="lede">
+          Meridian does not invent a greenfield SOA. It looks at Harborline — a 1.8 million line terminal operating system still running a port — and triangulates services from three meridians: the business domain, the existing assets, and the goals the port actually has.
+        </p>
+        <div class="cta-row">
+          <button class="btn solid" data-go="lab">Open the lab</button>
+          <button class="btn" data-go="relic">Inspect the relic</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>12</b><span>monolith modules</span></div>
+          <div class="stat"><b>10</b><span>candidate services</span></div>
+          <div class="stat"><b>3</b><span>identification meridians</span></div>
+          <div class="stat"><b>5</b><span>strangler tides</span></div>
+        </div>
+      </section>
+
+      <section class="view" id="relic">
+        <p class="kicker">Existing application</p>
+        <h2>Harborline, <em>2009</em>.</h2>
+        <p class="lede">A terminal operating system: vessels, boxes, gates, money. The UI is Oracle Forms. The truth lives in stored procedures. Nightly inventory freeze is still a religious event.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Module heat atlas</h3>
+            <p class="muted">Heat is change frequency × incident density. Bright bars are where services must be cut first.</p>
+            <div class="module-map" id="mod-map"></div>
+          </div>
+          <div class="card">
+            <h3>As-found stack</h3>
+            <p class="muted" id="stack"></p>
+            <h3 style="margin-top:18px">Why it hurts</h3>
+            <ul class="muted" id="pain" style="padding-left:18px"></ul>
+            <h3 style="margin-top:18px">Four processes that matter</h3>
+            <p class="muted">Admit a vessel · Gate a truck · Work a ship · Release cargo. Everything else is commentary.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="lab">
+        <p class="kicker">IBM SOMA, made spatial</p>
+        <h2>Three meridians, <em>one catalog</em>.</h2>
+        <p class="lede">A candidate is promoted only when it survives triangulation. Domain decomposition (top-down), existing-asset analysis (bottom-up), and goal-service modeling (meet-in-the-middle) each cast a vote. Cohesion, coupling, and reuse then score the survivors.</p>
+        <div class="lenses">
+          <article class="lens on" data-copy="Decompose marine, landside, yard, finance. Process tasks become service seeds. Entities that own data become entity services. We refuse god-modules.">
+            <div class="tag">Top-down</div>
+            <h3>Domain</h3>
+            <p class="muted">Harborline’s four processes and the entities they touch: Visit, Box, Berth, Invoice, Party.</p>
+          </article>
+          <article class="lens" data-copy="Read the relic: stored procedures, MQ payloads, Forms screens. Wrap what is stable. Isolate what is copied. EDI must never write yard slots again.">
+            <div class="tag">Bottom-up</div>
+            <h3>Assets</h3>
+            <p class="muted">1.8M lines, four billing clones, EDI inside inventory PL/SQL, LDAP bolted on.</p>
+          </article>
+          <article class="lens" data-copy="Goals are not slogans. Turn-time under 28 minutes needs Gate Passage. One tariff truth needs Invoice as a system of record. Partner ETA under 30s needs Vessel Call events.">
+            <div class="tag">Meet-in-middle</div>
+            <h3>Goals</h3>
+            <p class="muted">Truck turn, trustworthy ETA, single invoice, strangler — not a rewrite.</p>
+          </article>
+        </div>
+        <p class="lede" id="lens-copy">Decompose marine, landside, yard, finance. Process tasks become service seeds. Entities that own data become entity services. We refuse god-modules.</p>
+        <div class="filters">
+          <button class="chip on" data-layer="all">All</button>
+          <button class="chip" data-layer="process">Process</button>
+          <button class="chip" data-layer="entity">Entity</button>
+          <button class="chip" data-layer="task">Task</button>
+          <button class="chip" data-layer="utility">Utility</button>
+        </div>
+        <div class="candidate-list" id="candidates"></div>
+        <p class="muted" style="margin-top:12px">Votes: D domain · A assets · G goals. Score = cohesion 45% + (1−coupling) 30% + reuse 15% + vote ratio 10%.</p>
+      </section>
+
+      <section class="view" id="constellation">
+        <p class="kicker">SOA model</p>
+        <h2>The service <em>sky</em>.</h2>
+        <p class="lede">Process services orchestrate. Entity services own truth. Task services do one job well. Utility services are the tide that every ship rides. Edges are runtime conversations, not database foreign keys.</p>
+        <canvas id="sky-canvas"></canvas>
+        <div class="legend">
+          <span><i class="swatch" style="background:#6fd4c0"></i>Entity</span>
+          <span><i class="swatch" style="background:#d4a574"></i>Process</span>
+          <span><i class="swatch" style="background:#9bb7ff"></i>Task</span>
+          <span><i class="swatch" style="background:#ff6b4a"></i>Utility</span>
+          <span>Node size = reuse</span>
+        </div>
+      </section>
+
+      <section class="view" id="contracts">
+        <p class="kicker">Service specification</p>
+        <h2>What a service <em>owes</em>.</h2>
+        <p class="lede">Each contract names the layer, the data it is allowed to own, and the operations others may call. Ownership is the whole point of identification: if two services write the same box position, you still have a monolith.</p>
+        <div class="contract">
+          <div class="svc-list" id="svc-list"></div>
+          <div class="card">
+            <pre class="spec" id="spec"></pre>
+            <div class="ops" id="ops"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="tide">
+        <p class="kicker">Realization without a cliff</p>
+        <h2>Strangler <em>tide</em>, not a bang.</h2>
+        <p class="lede">Harborline cannot stop. We peel seams at slack water. First the utilities that every later service needs. Then the ledger of boxes. Then marine planning. Then the gate KPI. Then the quay.</p>
+        <h3 style="font-family:var(--serif);margin-top:28px">Choreography: gate a truck</h3>
+        <div class="flow" id="flow"></div>
+        <div class="timeline" id="timeline"></div>
+        <div class="principles">
+          <article><h3>No shared database</h3><p class="muted">Forms may read replicas. Only the owning service writes.</p></article>
+          <article><h3>Events over nightly freeze</h3><p class="muted">MovePosted replaces the inventory lock that still scares the night shift.</p></article>
+          <article><h3>Anti-corruption at EDI</h3><p class="muted">UN/EDIFACT never again mutates a yard slot from a stored procedure.</p></article>
+          <article><h3>One tariff truth</h3><p class="muted">Four billing copies collapse into Tariff &amp; Invoice. Rounding becomes a policy, not folklore.</p></article>
+        </div>
+      </section>
+
+      <section class="view" id="report">
+        <p class="kicker">Deliverable</p>
+        <h2>Field report for <em>Harborline</em>.</h2>
+        <div class="report">
+          <h3>Service catalog after triangulation</h3>
+          <p class="muted" id="promo"></p>
+          <table class="table">
+            <thead>
+              <tr><th>Service</th><th>Layer</th><th>Votes</th><th>Cohesion</th><th>Coupling</th><th>Score</th><th>Owner</th></tr>
+            </thead>
+            <tbody id="report-body"></tbody>
+          </table>
+          <p class="muted" style="margin-top:18px">
+            Meridian’s claim: service identification on an existing application is not a workshop of sticky notes. It is a three-bearing fix — domain, assets, goals — then a quantitative cut of cohesion, coupling, reuse, and granularity. The SOA model is the sky that remains after the fog of the monolith lifts.
+          </p>
+          <div class="cta-row">
+            <button class="btn solid" id="print">Print / save as PDF</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
